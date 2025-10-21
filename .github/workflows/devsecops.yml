@@ -4,16 +4,38 @@ jobs:
   Dependances:
     runs-on: ubuntu-latest
     steps:
-      - name: Dependances
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Installer les dépendances
         run: |
-          echo "ecrire ici le scrypt de contrôle des dépendances"
+          pip install -r requirements.txt
+
+      - name: Vérifier les dépendances
+        run: |
+          pip check
+
   Dockerfile:
     runs-on: ubuntu-latest
     needs: Dependances
     steps:
-      - name: Test Dockerfile
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Installer hadolint
         run: |
-          echo "ecrire ici le scrypt de contrôle du Dockerfile"
+          sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          sudo chmod +x /bin/hadolint
+
+      - name: Contrôler le Dockerfile
+        run: |
+          hadolint Dockerfile
+
   Deploy:
     runs-on: ubuntu-latest
     needs: Dockerfile
@@ -21,4 +43,3 @@ jobs:
       - name: Deploy
         run: |
           echo "Rien à faire ici. Votre application est prête à être déployée"
-          
